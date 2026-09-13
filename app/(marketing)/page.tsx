@@ -3,6 +3,7 @@ import { Marquee } from "@/components/marketing/Marquee";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { Features } from "@/components/marketing/Features";
 import { DashboardShowcase } from "@/components/marketing/DashboardShowcase";
+import { MasjidGallery } from "@/components/marketing/MasjidGallery";
 import { FinalCTA } from "@/components/marketing/FinalCTA";
 
 export default function HomePage() {
@@ -13,6 +14,7 @@ export default function HomePage() {
       <HowItWorks />
       <Features />
       <DashboardShowcase />
+      <MasjidGallery />
       <FinalCTA />
     </>
   );
