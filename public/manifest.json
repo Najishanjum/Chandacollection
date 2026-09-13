@@ -1,0 +1,17 @@
+{
+  "name": "Quadri Jama Masjid Chanda App",
+  "short_name": "Quadri Masjid",
+  "description": "Digital Chanda Management, Receipts, and Islamic Calendar for Quadri Jama Masjid Deoria Baradih",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F4EA",
+  "theme_color": "#0B0906",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -46,6 +46,13 @@ export function Navbar() {
               <span>Gallery</span>
               <span className="w-2 h-2 rounded-full bg-[#C8FF19] border border-[#0B0906]" />
             </Link>
+            <Link
+              href="/calendar"
+              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors flex items-center gap-1"
+            >
+              <span>Calendar</span>
+              <span className="text-xs">🌙</span>
+            </Link>
           </div>
 
           {/* Desktop Actions */}
@@ -110,6 +117,13 @@ export function Navbar() {
                 className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase text-[#252BFF]"
               >
                 🕌 Masjid Gallery
+              </Link>
+              <Link
+                href="/calendar"
+                onClick={() => setMobileOpen(false)}
+                className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase text-[#00875A]"
+              >
+                🌙 Islamic Calendar
               </Link>
               <div className="pt-4 border-t-2 border-[#D4D3C9] space-y-3">
                 <Link

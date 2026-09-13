@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -82,28 +82,145 @@ const GALLERY_ITEMS: GalleryItem[] = [
   },
 ];
 
+import { toast } from "sonner";
+import {
+  Upload,
+  Camera,
+  Image as ImageIcon,
+} from "lucide-react";
+
 export function MasjidGallery() {
   const { language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [customItems, setCustomItems] = useState<GalleryItem[]>([]);
+
+  // Form states for upload
+  const [uploadTitle, setUploadTitle] = useState("");
+  const [uploadUploader, setUploadUploader] = useState("");
+  const [uploadCategory, setUploadCategory] = useState("construction");
+  const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  // Load custom uploads from localStorage
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("quadri_masjid_custom_photos");
+      if (saved) {
+        setCustomItems(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const allItems = [...customItems, ...GALLERY_ITEMS];
 
   const filteredItems =
     activeFilter === "all"
-      ? GALLERY_ITEMS
-      : GALLERY_ITEMS.filter((item) => item.category === activeFilter);
+      ? allItems
+      : allItems.filter((item) => item.category === activeFilter);
 
   const handlePrev = () => {
     if (selectedImageIndex === null) return;
     setSelectedImageIndex((prev) =>
-      prev! > 0 ? prev! - 1 : GALLERY_ITEMS.length - 1
+      prev! > 0 ? prev! - 1 : filteredItems.length - 1
     );
   };
 
   const handleNext = () => {
     if (selectedImageIndex === null) return;
     setSelectedImageIndex((prev) =>
-      prev! < GALLERY_ITEMS.length - 1 ? prev! + 1 : 0
+      prev! < filteredItems.length - 1 ? prev! + 1 : 0
     );
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file (PNG, JPG, WEBP).");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image file size should be less than 5MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setUploadPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUploadSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!uploadPreview) {
+      toast.error("Please select a photo to upload.");
+      return;
+    }
+    if (!uploadTitle.trim()) {
+      toast.error("Please enter a title or description for the photo.");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const newItem: GalleryItem = {
+        id: `custom-${Date.now()}`,
+        src: uploadPreview,
+        title: uploadTitle.trim(),
+        titleHi: uploadTitle.trim(),
+        titleHinglish: uploadTitle.trim(),
+        subtitle: uploadUploader.trim()
+          ? `Uploaded by ${uploadUploader.trim()} • Quadri Jama Masjid Community`
+          : "Shared by Quadri Jama Masjid community member.",
+        subtitleHi: uploadUploader.trim()
+          ? `${uploadUploader.trim()} द्वारा अपलोड की गई • कुआदरी जामा मस्जिद`
+          : "कुआदरी जामा मस्जिद अवाम द्वारा शेयर की गई तस्वीर।",
+        subtitleHinglish: uploadUploader.trim()
+          ? `${uploadUploader.trim()} ne upload kiya • Quadri Jama Masjid`
+          : "Quadri Jama Masjid community ki taraf se share ki gayi tasveer.",
+        category: uploadCategory,
+        tag: `Community Upload • ${uploadUploader.trim() || "Member"}`,
+        tagColor: "bg-[#252BFF] text-white",
+        location: "Deoria Baradih, Muzaffarpur",
+        date: new Date().toLocaleDateString("en-IN", { month: "short", year: "numeric" }),
+      };
+
+      const updated = [newItem, ...customItems];
+      setCustomItems(updated);
+
+      try {
+        localStorage.setItem("quadri_masjid_custom_photos", JSON.stringify(updated));
+      } catch (storageErr) {
+        console.warn("Storage full, kept in current session", storageErr);
+      }
+
+      toast.success(
+        language === "hi"
+          ? "जज़ाकल्लाह! आपकी तस्वीर सफलतापूर्वक अपलोड हो गई है।"
+          : language === "hinglish"
+          ? "JazakAllah Khair! Aapki photo kamyabi se upload ho gayi!"
+          : "JazakAllah Khair! Photo uploaded successfully."
+      );
+
+      // Reset
+      setUploadPreview(null);
+      setUploadTitle("");
+      setUploadUploader("");
+      setUploadModalOpen(false);
+      setIsUploading(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to upload photo. Please try again.");
+      setIsUploading(false);
+    }
   };
 
   const getLocalizedTitle = (item: GalleryItem) => {
@@ -146,8 +263,22 @@ export function MasjidGallery() {
             </div>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap gap-2">
+          {/* Action & Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setUploadModalOpen(true)}
+              className="brutal-btn bg-[#252BFF] text-white py-1.5 px-3 text-xs flex items-center gap-1.5 shadow-[2px_2px_0px_0px_#0B0906] hover:bg-[#1a20d4] font-bold"
+            >
+              <Upload size={14} />
+              <span>
+                {language === "hi"
+                  ? "फोटो अपलोड करें"
+                  : language === "hinglish"
+                  ? "Photo Upload Karein"
+                  : "Upload Masjid Photo"}
+              </span>
+            </button>
+
             {[
               {
                 key: "all",
@@ -339,6 +470,58 @@ export function MasjidGallery() {
           </div>
         </div>
 
+        {/* Community Uploaded Photos Grid (if any) */}
+        {customItems.length > 0 && (
+          <div className="mt-12 pt-8 border-t-2 border-[#0B0906]">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs uppercase font-bold text-[#252BFF]">
+                  Awaam ki Taraf Se
+                </span>
+                <h3 className="font-[family-name:var(--font-space-grotesk)] font-bold text-2xl uppercase text-[#0B0906]">
+                  Community Uploaded Photos ({customItems.length})
+                </h3>
+              </div>
+              <button
+                onClick={() => setUploadModalOpen(true)}
+                className="brutal-btn brutal-btn-primary text-xs py-1.5 px-3"
+              >
+                + Add Another
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {customItems.map((cItem, cIdx) => (
+                <div
+                  key={cItem.id}
+                  className="brutal-card p-4 bg-white hover:shadow-[6px_6px_0px_0px_#0B0906] transition-all cursor-pointer group"
+                  onClick={() => setSelectedImageIndex(cIdx)}
+                >
+                  <div className="relative aspect-[16/10] w-full border-2 border-[#0B0906] bg-black overflow-hidden mb-3">
+                    <Image
+                      src={cItem.src}
+                      alt={cItem.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-2 left-2">
+                      <span className="px-2 py-0.5 text-[10px] font-[family-name:var(--font-ibm-plex-mono)] font-bold uppercase bg-[#252BFF] text-white border border-[#0B0906]">
+                        Community
+                      </span>
+                    </div>
+                  </div>
+                  <h4 className="font-[family-name:var(--font-space-grotesk)] font-bold text-base text-[#0B0906] truncate">
+                    {cItem.title}
+                  </h4>
+                  <p className="font-[family-name:var(--font-space-grotesk)] text-xs text-[#6B6860] mt-1 line-clamp-2">
+                    {cItem.subtitle}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Community Trust Callout Banner */}
         <div className="mt-10 p-6 sm:p-8 bg-[#0B0906] text-white border-2 border-[#0B0906] shadow-[6px_6px_0px_0px_#C8FF19] flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="max-w-2xl">
@@ -399,7 +582,7 @@ export function MasjidGallery() {
                 <div className="flex items-center gap-2">
                   <span className="text-sm">🕌</span>
                   <span className="font-[family-name:var(--font-space-grotesk)] font-bold text-sm text-[#C8FF19] truncate">
-                    Quadri Jama Masjid • {GALLERY_ITEMS[selectedImageIndex].location}
+                    Quadri Jama Masjid • {filteredItems[selectedImageIndex]?.location}
                   </span>
                 </div>
                 <button
@@ -414,8 +597,8 @@ export function MasjidGallery() {
               {/* Image Preview Container */}
               <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full bg-black flex items-center justify-center overflow-hidden">
                 <Image
-                  src={GALLERY_ITEMS[selectedImageIndex].src}
-                  alt={GALLERY_ITEMS[selectedImageIndex].title}
+                  src={filteredItems[selectedImageIndex]?.src || ""}
+                  alt={filteredItems[selectedImageIndex]?.title || "Masjid Photo"}
                   fill
                   sizes="100vw"
                   className="object-contain"
@@ -444,25 +627,175 @@ export function MasjidGallery() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 text-[10px] font-[family-name:var(--font-ibm-plex-mono)] font-bold uppercase border border-[#0B0906] ${GALLERY_ITEMS[selectedImageIndex].tagColor}`}>
-                        {GALLERY_ITEMS[selectedImageIndex].tag}
+                      <span className={`px-2 py-0.5 text-[10px] font-[family-name:var(--font-ibm-plex-mono)] font-bold uppercase border border-[#0B0906] ${filteredItems[selectedImageIndex]?.tagColor}`}>
+                        {filteredItems[selectedImageIndex]?.tag}
                       </span>
                       <span className="text-xs text-[#6B6860] font-[family-name:var(--font-ibm-plex-mono)]">
-                        {selectedImageIndex + 1} / {GALLERY_ITEMS.length}
+                        {selectedImageIndex + 1} / {filteredItems.length}
                       </span>
                     </div>
                     <h3 className="font-[family-name:var(--font-space-grotesk)] font-bold text-lg sm:text-xl text-[#0B0906] mt-1">
-                      {getLocalizedTitle(GALLERY_ITEMS[selectedImageIndex])}
+                      {filteredItems[selectedImageIndex] ? getLocalizedTitle(filteredItems[selectedImageIndex]) : ""}
                     </h3>
                   </div>
                   <div className="text-xs text-[#6B6860] font-[family-name:var(--font-ibm-plex-mono)]">
-                    {GALLERY_ITEMS[selectedImageIndex].date}
+                    {filteredItems[selectedImageIndex]?.date}
                   </div>
                 </div>
                 <p className="font-[family-name:var(--font-space-grotesk)] text-xs sm:text-sm text-[#6B6860] mt-2">
-                  {getLocalizedSubtitle(GALLERY_ITEMS[selectedImageIndex])}
+                  {filteredItems[selectedImageIndex] ? getLocalizedSubtitle(filteredItems[selectedImageIndex]) : ""}
                 </p>
               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Photo Upload Modal */}
+      <AnimatePresence>
+        {uploadModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#0B0906]/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+            onClick={() => setUploadModalOpen(false)}
+          >
+            <div
+              className="relative max-w-lg w-full bg-white border-2 border-[#0B0906] shadow-[8px_8px_0px_0px_#0B0906] my-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-3.5 bg-[#0B0906] text-white border-b-2 border-[#0B0906]">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">📸</span>
+                  <h3 className="font-[family-name:var(--font-space-grotesk)] font-bold text-sm sm:text-base text-[#C8FF19] uppercase tracking-wide">
+                    {language === "hi"
+                      ? "मस्जिद की तस्वीर अपलोड करें"
+                      : language === "hinglish"
+                      ? "Masjid ki Photo Upload Karein"
+                      : "Upload Masjid Photo"}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setUploadModalOpen(false)}
+                  className="text-white hover:text-[#C8FF19] transition-colors p-1"
+                  aria-label="Close"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleUploadSubmit} className="p-5 sm:p-6 space-y-4">
+                {/* File Dropzone & Live Preview */}
+                <div>
+                  <label className="block font-[family-name:var(--font-space-grotesk)] font-bold text-xs uppercase mb-1.5 text-[#0B0906]">
+                    Select Photo <span className="text-[#FF3864]">*</span>
+                  </label>
+
+                  {uploadPreview ? (
+                    <div className="relative aspect-[16/9] w-full border-2 border-[#0B0906] bg-black overflow-hidden group">
+                      <Image
+                        src={uploadPreview}
+                        alt="Preview"
+                        fill
+                        className="object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setUploadPreview(null)}
+                        className="absolute top-2 right-2 bg-[#FF3864] text-white border border-[#0B0906] p-1.5 text-xs font-bold shadow-[2px_2px_0px_0px_#0B0906]"
+                        title="Remove photo"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex flex-col items-center justify-center w-full aspect-[16/9] border-2 border-dashed border-[#0B0906] bg-[#F5F4EA] hover:bg-white cursor-pointer transition-colors p-4 text-center">
+                      <Camera size={32} className="text-[#6B6860] mb-2" />
+                      <span className="font-[family-name:var(--font-space-grotesk)] font-bold text-sm text-[#0B0906]">
+                        Click or Drag to Upload Photo
+                      </span>
+                      <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-[#6B6860] mt-1">
+                        PNG, JPG, WEBP up to 5MB
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileSelect}
+                      />
+                    </label>
+                  )}
+                </div>
+
+                {/* Photo Title */}
+                <div>
+                  <label className="block font-[family-name:var(--font-space-grotesk)] font-bold text-xs uppercase mb-1 text-[#0B0906]">
+                    Photo Caption / Title <span className="text-[#FF3864]">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Juma Namaz Gathering / Minar Construction"
+                    value={uploadTitle}
+                    onChange={(e) => setUploadTitle(e.target.value)}
+                    className="brutal-input"
+                  />
+                </div>
+
+                {/* Uploader Name */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-[family-name:var(--font-space-grotesk)] font-bold text-xs uppercase mb-1 text-[#0B0906]">
+                      Your Name (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Md Najish"
+                      value={uploadUploader}
+                      onChange={(e) => setUploadUploader(e.target.value)}
+                      className="brutal-input"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-[family-name:var(--font-space-grotesk)] font-bold text-xs uppercase mb-1 text-[#0B0906]">
+                      Category
+                    </label>
+                    <select
+                      value={uploadCategory}
+                      onChange={(e) => setUploadCategory(e.target.value)}
+                      className="brutal-input"
+                    >
+                      <option value="construction">Tameer / Construction</option>
+                      <option value="minarets">Minarets / Architecture</option>
+                      <option value="skyline">Skyline / Evening Glow</option>
+                      <option value="prayer">Prayer / Namaz</option>
+                      <option value="events">Events & Gathering</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-[#D4D3C9] flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setUploadModalOpen(false)}
+                    className="brutal-btn brutal-btn-white flex-1 justify-center py-2 text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isUploading}
+                    className="brutal-btn brutal-btn-primary flex-1 justify-center py-2 text-xs"
+                  >
+                    <Upload size={14} />
+                    {isUploading ? "Uploading..." : "Save to Gallery"}
+                  </button>
+                </div>
+              </form>
             </div>
           </motion.div>
         )}

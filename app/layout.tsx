@@ -59,9 +59,16 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Quadri Masjid",
+  },
 };
 
 import { LanguageProvider } from "@/lib/i18n";
+import { MobileInstallPrompt } from "@/components/MobileInstallPrompt";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -72,6 +79,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-screen">
         <LanguageProvider>
           {children}
+          <MobileInstallPrompt />
         </LanguageProvider>
         <Toaster
           position="bottom-right"
