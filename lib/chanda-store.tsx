@@ -145,7 +145,7 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
       organization_id: "org-001",
       name: input.name.trim(),
       phone: input.phone.trim(),
-      city: input.city?.trim() || "Jabalpur",
+      city: input.city?.trim() || "Muzaffarpur",
       area: input.area?.trim() || null,
       monthly_amount: Number(input.monthly_amount),
       start_month: startMonth,
@@ -186,7 +186,7 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
     );
 
     const paymentId = `pay-${Date.now()}`;
-    const receiptNum = `NM-${String(payments.length + 1).padStart(6, "0")}`;
+    const receiptNum = `QJM-${String(payments.length + 1).padStart(6, "0")}`;
     const todayStr = input.payment_date || new Date().toISOString().split("T")[0];
 
     const newPayment: Payment = {

@@ -26,13 +26,13 @@ import { getMonthName } from "@/lib/utils";
 
 export const demoOrg: Organization = {
   id: "org-001",
-  name: "Noor Masjid",
-  slug: "noor-masjid-jabalpur",
-  city: "Jabalpur",
-  state: "Madhya Pradesh",
-  address: "Near Gohalpur Chowk, Jabalpur",
+  name: "Quadri Jama Masjid",
+  slug: "quadri-jama-masjid-deoria-muzaffarpur",
+  city: "Deoria, Muzaffarpur",
+  state: "Bihar",
+  address: "Deoria Baradih, Muzaffarpur",
   logo_url: null,
-  receipt_prefix: "NM",
+  receipt_prefix: "QJM",
   receipt_counter: 124,
   footer_message: "Thank you for your contribution.",
   is_public: true,
@@ -48,9 +48,9 @@ export const demoUser: User = {
   id: "user-001",
   organization_id: "org-001",
   auth_user_id: "auth-001",
-  name: "Najish Ahmed",
-  phone: "9876543210",
-  email: "najish@example.com",
+  name: "Noorain Alam",
+  phone: "7631296157",
+  email: "noorain@quadrimasjid.org",
   role: "admin",
   created_at: "2026-01-01T00:00:00Z",
   updated_at: "2026-09-01T00:00:00Z",
@@ -75,16 +75,31 @@ const lastNames = [
 ];
 
 const areas = [
-  "Gohalpur", "Adhartal", "Madan Mahal", "Wright Town", "Napier Town",
-  "Civil Lines", "Shakti Nagar", "Vijay Nagar", "Garha", "Ranjhi",
-  "Khamaria", "Gorakhpur", "Tilwara", "Patan", "Suhagi",
+  "Deoria Baradih", "Deoria", "Baradih", "Quadri Chowk",
+  "Civil Lines", "Shakti Nagar", "Vijay Nagar", "Muzaffarpur",
 ];
 
 const amounts = [200, 300, 500, 500, 500, 500, 500, 750, 1000, 1000, 1500, 2000, 2500, 5000];
 
 function generateMembers(count: number): Member[] {
   const members: Member[] = [];
-  for (let i = 0; i < count; i++) {
+  // First prominent member: Md Najish
+  members.push({
+    id: "member-001",
+    organization_id: "org-001",
+    name: "Md Najish",
+    phone: "7631296157",
+    city: "Muzaffarpur",
+    area: "Deoria Baradih",
+    monthly_amount: 1000,
+    start_month: 1,
+    start_year: 2026,
+    status: "active",
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-09-01T00:00:00Z",
+  });
+
+  for (let i = 1; i < count; i++) {
     const firstName = firstNames[i % firstNames.length];
     const lastName = lastNames[i % lastNames.length];
     members.push({
@@ -92,7 +107,7 @@ function generateMembers(count: number): Member[] {
       organization_id: "org-001",
       name: `${firstName} ${lastName}`,
       phone: `9${String(800000000 + i * 1111).padStart(9, "0")}`,
-      city: "Jabalpur",
+      city: "Muzaffarpur",
       area: areas[i % areas.length],
       monthly_amount: amounts[i % amounts.length],
       start_month: 1,
@@ -181,7 +196,7 @@ function generatePayments(): Payment[] {
         amount: record.paid_amount,
         payment_method: methods[counter % 3],
         payment_date: `2026-${String(record.month).padStart(2, "0")}-${String(5 + (counter % 20)).padStart(2, "0")}`,
-        receipt_number: `NM-${String(counter).padStart(6, "0")}`,
+        receipt_number: `QJM-${String(counter).padStart(6, "0")}`,
         recorded_by: "user-001",
         status: "success",
         cancellation_reason: null,

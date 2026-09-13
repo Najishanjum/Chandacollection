@@ -73,10 +73,10 @@ export function Hero() {
               {/* Receipt Header */}
               <div className="text-center mb-6 pb-4 border-b-2 border-dashed border-[#D4D3C9]">
                 <p className="font-[family-name:var(--font-space-grotesk)] font-bold text-lg uppercase tracking-wide">
-                  Noor Masjid
+                  Quadri Jama Masjid
                 </p>
                 <p className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-[#6B6860] uppercase tracking-widest mt-1">
-                  Jabalpur
+                  Deoria, Muzaffarpur
                 </p>
               </div>
 
@@ -92,7 +92,7 @@ export function Hero() {
                 <div className="flex justify-between items-start">
                   <span className="brutal-label">Name</span>
                   <span className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm text-right">
-                    Mohammad Ahmed
+                    Noorain Alam
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
@@ -104,7 +104,7 @@ export function Hero() {
                 <div className="flex justify-between items-start">
                   <span className="brutal-label">Amount</span>
                   <span className="font-[family-name:var(--font-space-grotesk)] font-bold text-xl">
-                    ₹500
+                    ₹1,000
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
@@ -118,7 +118,7 @@ export function Hero() {
               {/* Receipt Number & Status */}
               <div className="pt-4 border-t-2 border-dashed border-[#D4D3C9] flex justify-between items-center">
                 <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-[#6B6860]">
-                  #NM-000124
+                  #QJM-000124
                 </span>
                 <span className="badge badge-paid text-[0.625rem]">
                   ✓ Paid

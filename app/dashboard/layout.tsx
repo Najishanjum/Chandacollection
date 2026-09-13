@@ -65,7 +65,7 @@ function DashboardLayoutContent({
                 {demoOrg.name}
               </p>
               <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[0.625rem] text-[#6B6860] uppercase tracking-wider">
-                {demoOrg.city}, MP
+                {demoOrg.city}
               </p>
             </div>
           </div>
@@ -137,31 +137,32 @@ function DashboardLayoutContent({
 
       {/* Mobile Header */}
       <header className="lg:hidden sticky top-0 z-40 bg-white border-b-2 border-[#0B0906] print:hidden">
-        <div className="flex items-center justify-between h-14 px-4">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between h-14 px-3 sm:px-4 gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-1.5 hover:bg-[#F5F4EA]"
+              className="p-1 sm:p-1.5 hover:bg-[#F5F4EA] shrink-0"
               aria-label="Open menu"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm">🕌</span>
-              <span className="font-[family-name:var(--font-space-grotesk)] font-bold text-sm truncate max-w-32">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="text-sm shrink-0">🕌</span>
+              <span className="font-[family-name:var(--font-space-grotesk)] font-bold text-xs sm:text-sm text-[#0B0906] truncate">
                 {demoOrg.name}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <LanguageToggle />
             <button
               onClick={() => setAddPersonOpen(true)}
-              className="w-8 h-8 bg-[#252BFF] text-white border-2 border-[#0B0906] flex items-center justify-center"
+              className="w-7 h-7 sm:w-8 sm:h-8 bg-[#252BFF] text-white border-2 border-[#0B0906] shadow-[2px_2px_0px_0px_#0B0906] flex items-center justify-center shrink-0 hover:bg-[#1f24d4] transition-colors"
               title={t.addPerson}
             >
-              <UserPlus size={16} />
+              <UserPlus size={14} className="sm:hidden" />
+              <UserPlus size={16} className="hidden sm:block" />
             </button>
           </div>
         </div>
@@ -269,9 +270,9 @@ function DashboardLayoutContent({
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t-2 border-[#0B0906] print:hidden">
-        <div className="flex items-center justify-around h-14">
-          {navItems.slice(0, 5).map((item) => {
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t-2 border-[#0B0906] shadow-[0_-2px_6px_rgba(0,0,0,0.05)] print:hidden">
+        <div className="grid grid-cols-6 h-14 w-full px-0.5 items-center">
+          {navItems.map((item) => {
             const isActive =
               item.href === "/dashboard"
                 ? pathname === "/dashboard"
@@ -281,12 +282,12 @@ function DashboardLayoutContent({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 p-1 min-w-0",
-                  isActive ? "text-[#252BFF]" : "text-[#6B6860]"
+                  "flex flex-col items-center justify-center py-1 px-0.5 min-w-0 w-full overflow-hidden text-center transition-colors",
+                  isActive ? "text-[#252BFF]" : "text-[#6B6860] hover:text-[#0B0906]"
                 )}
               >
-                <item.icon size={18} />
-                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[0.5625rem] uppercase tracking-wider truncate">
+                <item.icon size={17} className="shrink-0" />
+                <span className="font-[family-name:var(--font-ibm-plex-mono)] text-[8px] sm:text-[9.5px] font-semibold uppercase tracking-tighter truncate max-w-full block text-center leading-tight mt-0.5">
                   {item.label}
                 </span>
               </Link>

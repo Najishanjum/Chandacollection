@@ -53,7 +53,7 @@ export default function ContactPage() {
                 type="text"
                 required
                 className="brutal-input"
-                placeholder="Mohammad Ahmed"
+                placeholder="Md Najish"
               />
             </div>
 
@@ -69,7 +69,7 @@ export default function ContactPage() {
                 type="email"
                 required
                 className="brutal-input"
-                placeholder="ahmed@example.com"
+                placeholder="najish@example.com"
               />
             </div>
 
@@ -84,7 +84,7 @@ export default function ContactPage() {
                 id="contact-masjid"
                 type="text"
                 className="brutal-input"
-                placeholder="Noor Masjid"
+                placeholder="Quadri Jama Masjid"
               />
             </div>
 

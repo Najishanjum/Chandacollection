@@ -14,16 +14,13 @@ interface AddPersonModalProps {
 }
 
 const COMMON_AREAS = [
+  "Deoria Baradih",
+  "Deoria",
+  "Baradih",
+  "Quadri Chowk",
+  "Muzaffarpur",
   "Gohalpur",
-  "Adhartal",
-  "Madan Mahal",
-  "Wright Town",
-  "Napier Town",
   "Civil Lines",
-  "Vijay Nagar",
-  "Garha",
-  "Ranjhi",
-  "Suhagi",
 ];
 
 const PRESET_AMOUNTS = [200, 300, 500, 1000, 1500, 2000, 5000];
@@ -34,7 +31,7 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("Jabalpur");
+  const [city, setCity] = useState("Muzaffarpur");
   const [area, setArea] = useState("");
   const [address, setAddress] = useState("");
   const [monthlyAmount, setMonthlyAmount] = useState<number>(500);
@@ -71,7 +68,7 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
       const created = addMember({
         name: name.trim(),
         phone: cleanPhone,
-        city: city.trim() || "Jabalpur",
+        city: city.trim() || "Muzaffarpur",
         area: area.trim() || undefined,
         address: address.trim() || undefined,
         monthly_amount: monthlyAmount,
@@ -133,7 +130,13 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
             <input
               type="text"
               required
-              placeholder={language === "hinglish" ? "Jaise: Mohammad Bilal" : "e.g. Mohammad Bilal"}
+              placeholder={
+                language === "hinglish"
+                  ? "Jaise: Md Najish"
+                  : language === "hi"
+                  ? "जैसे: Md Najish"
+                  : "e.g. Md Najish"
+              }
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={`brutal-input ${errors.name ? "border-[#FF3864]" : ""}`}
@@ -158,7 +161,7 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
                 type="tel"
                 maxLength={10}
                 required
-                placeholder="9826123456"
+                placeholder="7631296157"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ""))}
                 className={`brutal-input pl-12 ${errors.phone ? "border-[#FF3864]" : ""}`}
@@ -180,7 +183,7 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
               <input
                 type="text"
                 list="area-suggestions"
-                placeholder="e.g. Gohalpur"
+                placeholder="e.g. Deoria Baradih"
                 value={area}
                 onChange={(e) => setArea(e.target.value)}
                 className="brutal-input"
@@ -198,7 +201,7 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
               </label>
               <input
                 type="text"
-                placeholder="Jabalpur"
+                placeholder="Muzaffarpur"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 className="brutal-input"
@@ -213,7 +216,7 @@ export function AddPersonModal({ isOpen, onClose, onSuccess }: AddPersonModalPro
             </label>
             <input
               type="text"
-              placeholder="e.g. House No. 45, Near Bilal Masjid, Gohalpur"
+              placeholder="e.g. House No 1, Quadri Masjid, Deoria"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="brutal-input text-sm"

@@ -49,7 +49,7 @@ export default function SignupPage() {
               type="text"
               required
               className="brutal-input"
-              placeholder="Najish Ahmed"
+              placeholder="Md Najish"
               autoComplete="name"
             />
           </div>
@@ -99,7 +99,7 @@ export default function SignupPage() {
                   type="text"
                   required
                   className="brutal-input"
-                  placeholder="Noor Masjid"
+                  placeholder="Quadri Jama Masjid"
                 />
               </div>
 
@@ -115,7 +115,7 @@ export default function SignupPage() {
                   type="text"
                   required
                   className="brutal-input"
-                  placeholder="Jabalpur"
+                  placeholder="Muzaffarpur"
                 />
               </div>
             </div>

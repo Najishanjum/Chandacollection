@@ -178,12 +178,15 @@ _JazakAllah Khair for your continuous contribution!_`;
             <div className="text-center">
               <div className="h-10 flex items-center justify-center">
                 <span className="font-[family-name:var(--font-space-grotesk)] italic text-sm font-serif text-[#0B0906]">
-                  Najish Ahmed
+                  {receipt.recordedBy || "Noorain Alam"}
                 </span>
               </div>
-              <div className="w-36 border-t border-[#0B0906] pt-1">
-                <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[0.5625rem] text-[#6B6860] uppercase leading-tight">
+              <div className="w-40 border-t border-[#0B0906] pt-1">
+                <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[0.5625rem] text-[#6B6860] uppercase leading-tight font-semibold">
                   {t.authorizedSignature}
+                </p>
+                <p className="font-[family-name:var(--font-ibm-plex-mono)] text-[0.5rem] text-[#6B6860] leading-tight mt-0.5">
+                  Noorain Alam (Deoria Baradih Masjid)
                 </p>
               </div>
             </div>

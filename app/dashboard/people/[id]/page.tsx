@@ -79,7 +79,7 @@ export default function PersonProfilePage() {
           monthlyPledge: member.monthly_amount,
           masjidName: org.name,
           masjidAddress: org.address || `${org.city}, ${org.state}`,
-          recordedBy: "Najish Ahmed",
+          recordedBy: "Noorain Alam",
         };
         setSelectedReceipt(full);
       }

@@ -32,10 +32,10 @@ export function DashboardShowcase() {
             <div className="flex items-center gap-2">
               <span className="text-lg">🕌</span>
               <h3 className="font-[family-name:var(--font-space-grotesk)] font-bold text-xl">
-                Noor Masjid
+                Quadri Jama Masjid
               </h3>
               <span className="font-[family-name:var(--font-ibm-plex-mono)] text-xs text-[#6B6860]">
-                • Jabalpur
+                • Deoria, Muzaffarpur
               </span>
             </div>
           </div>
