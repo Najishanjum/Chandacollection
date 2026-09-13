@@ -1,36 +1,168 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🕌 CHANDA (चंदा / مسجد کا چندہ)
 
-## Getting Started
+> **Every Chanda. Clearly Recorded.**  
+> A simple, fast, and mobile-first Chanda management system designed specifically for Masjids and community committees in India.
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?style=flat&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS%20v4-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 📌 Problem & Vision
+
+Most Masjids in India manage monthly Chanda (contributions) using paper registers, WhatsApp notes, or mental calculations. This leads to:
+* ❌ Lost payment records and forgotten dues
+* ❌ Lack of transparency with donors
+* ❌ Time-consuming receipt generation
+* ❌ Difficulty generating annual/monthly committee reports
+
+**CHANDA** is built to do one thing exceptionally well:  
+**Add People → Record Chanda → Track Payments → Generate Receipts → See Reports → Build Transparency.**
+
+It is deliberately simple, intuitive, and works seamlessly on mobile phones for Masjid Secretaries and Mutawallis.
+
+---
+
+## ✨ Key Features
+
+### 1. 👥 Member / People Management
+* **Add Person**: Add members with Full Name, 10-digit Phone Number, Area/Mohalla (with quick locality suggestions), optional address, and monthly pledge amount (quick chips: ₹200, ₹300, ₹500, ₹1000, ₹2000, ₹5000).
+* **Automatic Registry**: Automatically generates monthly Chanda records for the entire year upon member creation.
+* **Persistent Storage**: Instant client-side state with `localStorage` persistence, plus full backend compatibility.
+* **Member Profiles**: Detailed view of each member's monthly breakdown, total paid, total pending, and past payment receipts.
+
+### 2. 💰 Monthly Chanda Registry
+* **Quick Status Tracking**: Real-time badges for **Paid (✓ Diya gya)**, **Partial (◐ Aadha jama)**, and **Pending (○ Baki hai / Dena hai)**.
+* **Month-by-Month Navigation**: Jump between any month of the year to review collections and balances.
+* **Quick Payment Recording**: Log payments with cash, UPI, or bank transfer in seconds.
+
+### 3. 🧾 Official Receipts with WhatsApp & Print/PDF
+* **Authentic Masjid Receipt**: Complete with Masjid name, address, receipt number (e.g. `NM-000042`), donor name, phone, area, and contribution month.
+* **Amount in Words**: Converts numeric amounts to words in English (*"Five Hundred Rupees Only"*) and Hindi (*"पाँच सौ रुपये मात्र"*).
+* **Direct WhatsApp Share**: One-click button that generates a pre-formatted receipt message and opens WhatsApp Web or mobile app directly.
+* **Print / Save as PDF**: Clean, print-optimized voucher layout for paper receipts.
+
+### 4. 📊 Financial Reports & Analytics (`/dashboard/reports`)
+* **Monthly Financial KPIs**: Expected This Month, Total Collected, Pending Amount, and Collection Rate %.
+* **Interactive 12-Month Trends**: Bar chart (powered by Recharts) comparing Expected vs Collected across all 12 months.
+* **Payment Mode Breakdown**: Distribution of Cash, UPI/QR, and Bank Transfer collections.
+* **Member Collection Registry Table**: Detailed per-member financial ledger with search and filters.
+* **Export to Excel (.xlsx)**: Export full collection data directly into Microsoft Excel spreadsheets with SheetJS (`xlsx`).
+* **Print Report**: Quick committee-ready financial report printouts.
+
+### 5. 🌐 Trilingual Localization (English, Hinglish / Roman Hindi, and Hindi)
+An instant language toggle available in the header and sidebar supporting:
+* **English (`EN`)**: Standard English UI.
+* **Hinglish / Roman Hindi (`Hinglish`)**: Hindi written in English script as used in everyday communication:
+  * *App Name*: **Masjid ka Chanda**
+  * *Add Person*: **Naya Member Jodein**
+  * *Paid*: **Diya gya**
+  * *Pending*: **Baki hai (Dena hai)**
+  * *Partial*: **Aadha jama**
+  * *Receipts*: **Rashid (Download Karein)**
+  * *Reports*: **Hisab Kitab (Reports)**
+  * *Monthly Chanda*: **Mahina ka Chanda**
+* **हिन्दी (`HI`)**: Full Devanagari Hindi support (*"मस्जिद का चंदा"*, *"नया सदस्य जोड़ें"*, *"जमा हुआ"*, *"बाकी है"*, *"रसीद"*).
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Framework** | [Next.js 16](https://nextjs.org/) (App Router, Turbopack) |
+| **UI & Language** | [React 19](https://react.dev/), [TypeScript 5](https://www.typescriptlang.org/) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) with Neo-Brutalist design tokens |
+| **Icons & Motion** | [Lucide React](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/) |
+| **Charts** | [Recharts](https://recharts.org/) |
+| **Spreadsheets** | [XLSX (SheetJS)](https://sheetjs.com/) |
+| **Notifications** | [Sonner](https://sonner.emilkowal.ski/) |
+| **Database Ready** | [Supabase SSR](https://supabase.com/) client & server integrations |
+
+---
+
+## 📁 Project Structure
+
+```
+chanda/
+├── app/
+│   ├── (auth)/             # Login & Signup flows
+│   ├── (marketing)/        # Landing page, Features, How It Works, About, Contact
+│   ├── dashboard/          # Secretary Dashboard
+│   │   ├── chanda/         # Monthly Chanda registry & quick payment
+│   │   ├── payments/       # Full payment ledger & receipt actions
+│   │   ├── people/         # Member list & Add Person modal
+│   │   │   └── [id]/       # Member profile & payment history
+│   │   ├── receipts/       # Receipts browser & printable vouchers
+│   │   ├── reports/        # Analytics, Recharts graphs, Excel exports
+│   │   ├── layout.tsx      # Responsive dashboard navigation & sidebar
+│   │   └── page.tsx        # Executive dashboard overview
+│   ├── globals.css         # Neo-brutalist theme styles & CSS variables
+│   └── layout.tsx          # Root layout with fonts, Toaster & LanguageProvider
+├── components/
+│   ├── dashboard/
+│   │   ├── AddPersonModal.tsx        # Add member modal with validation
+│   │   ├── ReceiptModal.tsx          # Official receipt modal with print & WhatsApp
+│   │   └── RecordPaymentModal.tsx    # Chanda collection modal
+│   ├── marketing/                    # Hero, Features, Showcase, Navbar, Footer
+│   └── LanguageToggle.tsx            # Global EN / Hinglish / HI switcher
+├── lib/
+│   ├── calculations.ts     # Status, collection rate, and balance logic
+│   ├── chanda-store.tsx    # Unified reactive store with localStorage sync
+│   ├── demo-data.ts        # Pre-loaded sample data for testing
+│   ├── i18n.tsx            # Localization dictionary & React context
+│   ├── number-to-words.ts  # Indian currency number-to-words (English & Hindi)
+│   ├── supabase/           # Supabase client, server, and middleware helpers
+│   └── utils.ts            # Currency formatter, date helpers, cn utility
+└── types/
+    └── database.ts         # TypeScript data contracts & database models
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Clone the repository
+```bash
+git clone https://github.com/Najishanjum/Chandacollection.git
+cd Chandacollection
+```
 
-## Learn More
+### 2. Install dependencies
+```bash
+npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 3. Configure Environment Variables
+Copy the example environment file:
+```bash
+cp .env.local.example .env.local
+```
+*(The application works with local persistence out of the box without requiring Supabase credentials)*.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Run Development Server
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📱 Key Links & Pages
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* **Home & Marketing**: `http://localhost:3000`
+* **Dashboard Overview**: `http://localhost:3000/dashboard`
+* **Members / People**: `http://localhost:3000/dashboard/people`
+* **Chanda Registry**: `http://localhost:3000/dashboard/chanda`
+* **Receipts & Downloads**: `http://localhost:3000/dashboard/receipts`
+* **Financial Reports**: `http://localhost:3000/dashboard/reports`
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
