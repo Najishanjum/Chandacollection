@@ -18,7 +18,6 @@ import {
 import { useState } from "react";
 import { demoOrg, demoUser } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
-import { ChandaProvider } from "@/lib/chanda-store";
 import { useLanguage } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { AddPersonModal } from "@/components/dashboard/AddPersonModal";
@@ -313,9 +312,5 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <ChandaProvider>
-      <DashboardLayoutContent>{children}</DashboardLayoutContent>
-    </ChandaProvider>
-  );
+  return <DashboardLayoutContent>{children}</DashboardLayoutContent>;
 }

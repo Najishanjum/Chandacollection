@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 import type {
   Member,
   ChandaRecord,
@@ -71,6 +71,7 @@ interface ChandaStoreContextType {
   recordPayment: (input: NewPaymentInput) => { payment: Payment; receipt: Receipt };
   getMembersWithStatus: (month?: number, year?: number) => MemberWithStatus[];
   getMemberById: (id: string) => Member | undefined;
+  getMemberByPhone: (phone: string) => Member | undefined;
   getPersonRecords: (memberId: string) => ChandaRecord[];
   getPersonPayments: (memberId: string) => Payment[];
   getPaymentsWithDetails: () => PaymentWithDetails[];
@@ -80,23 +81,25 @@ interface ChandaStoreContextType {
   getMonthlyOverview: (month?: number, year?: number) => MonthlyOverview;
   getAnnualReport: (year?: number) => AnnualReport;
   org: typeof demoOrg;
+  isSyncing: boolean;
+  refreshData: () => Promise<void>;
 }
 
 const ChandaStoreContext = createContext<ChandaStoreContextType | null>(null);
 
-const STORAGE_MEMBERS_KEY = "chanda_custom_members_v1";
-const STORAGE_RECORDS_KEY = "chanda_custom_records_v1";
-const STORAGE_PAYMENTS_KEY = "chanda_custom_payments_v1";
-const STORAGE_RECEIPTS_KEY = "chanda_custom_receipts_v1";
+const STORAGE_MEMBERS_KEY = "chanda_all_members_v2";
+const STORAGE_RECORDS_KEY = "chanda_all_records_v2";
+const STORAGE_PAYMENTS_KEY = "chanda_all_payments_v2";
+const STORAGE_RECEIPTS_KEY = "chanda_all_receipts_v2";
 
 export function ChandaProvider({ children }: { children: React.ReactNode }) {
-  const [customMembers, setCustomMembers] = useState<Member[]>([]);
-  const [customRecords, setCustomRecords] = useState<ChandaRecord[]>([]);
-  const [customPayments, setCustomPayments] = useState<Payment[]>([]);
-  const [customReceipts, setCustomReceipts] = useState<Receipt[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [members, setMembers] = useState<Member[]>(initialDemoMembers);
+  const [chandaRecords, setChandaRecords] = useState<ChandaRecord[]>(initialDemoRecords);
+  const [payments, setPayments] = useState<Payment[]>(initialDemoPayments);
+  const [receipts, setReceipts] = useState<Receipt[]>(initialDemoReceipts);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Load from LocalStorage on mount
+  // Load cached from LocalStorage on mount for instant rendering
   useEffect(() => {
     try {
       const storedMembers = localStorage.getItem(STORAGE_MEMBERS_KEY);
@@ -104,47 +107,104 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
       const storedPayments = localStorage.getItem(STORAGE_PAYMENTS_KEY);
       const storedReceipts = localStorage.getItem(STORAGE_RECEIPTS_KEY);
 
-      if (storedMembers) setCustomMembers(JSON.parse(storedMembers));
-      if (storedRecords) setCustomRecords(JSON.parse(storedRecords));
-      if (storedPayments) setCustomPayments(JSON.parse(storedPayments));
-      if (storedReceipts) setCustomReceipts(JSON.parse(storedReceipts));
+      if (storedMembers) setMembers(JSON.parse(storedMembers));
+      if (storedRecords) setChandaRecords(JSON.parse(storedRecords));
+      if (storedPayments) setPayments(JSON.parse(storedPayments));
+      if (storedReceipts) setReceipts(JSON.parse(storedReceipts));
     } catch (e) {
       console.error("Error loading chanda local storage", e);
-    } finally {
-      setIsLoaded(true);
     }
   }, []);
 
-  // Save to LocalStorage whenever custom data changes
+  // Sync to local storage for offline fallback
   useEffect(() => {
-    if (!isLoaded) return;
     try {
-      localStorage.setItem(STORAGE_MEMBERS_KEY, JSON.stringify(customMembers));
-      localStorage.setItem(STORAGE_RECORDS_KEY, JSON.stringify(customRecords));
-      localStorage.setItem(STORAGE_PAYMENTS_KEY, JSON.stringify(customPayments));
-      localStorage.setItem(STORAGE_RECEIPTS_KEY, JSON.stringify(customReceipts));
+      localStorage.setItem(STORAGE_MEMBERS_KEY, JSON.stringify(members));
+      localStorage.setItem(STORAGE_RECORDS_KEY, JSON.stringify(chandaRecords));
+      localStorage.setItem(STORAGE_PAYMENTS_KEY, JSON.stringify(payments));
+      localStorage.setItem(STORAGE_RECEIPTS_KEY, JSON.stringify(receipts));
     } catch (e) {
-      console.error("Error saving chanda local storage", e);
+      console.warn("Error updating local storage cache", e);
     }
-  }, [customMembers, customRecords, customPayments, customReceipts, isLoaded]);
+  }, [members, chandaRecords, payments, receipts]);
 
-  // Combined lists
-  const members = useMemo(() => [...customMembers, ...initialDemoMembers], [customMembers]);
-  const chandaRecords = useMemo(() => [...customRecords, ...initialDemoRecords], [customRecords]);
-  const payments = useMemo(() => [...customPayments, ...initialDemoPayments], [customPayments]);
-  const receipts = useMemo(() => [...customReceipts, ...initialDemoReceipts], [customReceipts]);
+  // Server sync function
+  const refreshData = useCallback(async () => {
+    try {
+      setIsSyncing(true);
 
-  // Add new Member
+      // Fetch members and records
+      const [membersRes, paymentsRes] = await Promise.allSettled([
+        fetch("/api/members", { cache: "no-store" }).then((r) => r.json()),
+        fetch("/api/payments", { cache: "no-store" }).then((r) => r.json()),
+      ]);
+
+      if (membersRes.status === "fulfilled" && membersRes.value?.success) {
+        const sMembers: Member[] = membersRes.value.members || [];
+        const sRecords: ChandaRecord[] = membersRes.value.chandaRecords || [];
+        if (sMembers.length > 0) {
+          setMembers(sMembers);
+        }
+        if (sRecords.length > 0) {
+          setChandaRecords(sRecords);
+        }
+      }
+
+      if (paymentsRes.status === "fulfilled" && paymentsRes.value?.success) {
+        const sPayments: Payment[] = paymentsRes.value.payments || [];
+        const sReceipts: Receipt[] = paymentsRes.value.receipts || [];
+        if (sPayments.length > 0) {
+          setPayments(sPayments);
+        }
+        if (sReceipts.length > 0) {
+          setReceipts(sReceipts);
+        }
+      }
+    } catch (err) {
+      console.error("Error refreshing chanda store from server:", err);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, []);
+
+  // Periodic polling & focus listener to ensure cross-device/cross-browser real-time sync
+  useEffect(() => {
+    // Initial fetch from server
+    refreshData();
+
+    // Poll server every 6 seconds so other devices' additions appear automatically
+    const interval = setInterval(() => {
+      refreshData();
+    }, 6000);
+
+    // Sync on tab focus / visibility change
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshData();
+      }
+    };
+    window.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", refreshData);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("focus", refreshData);
+    };
+  }, [refreshData]);
+
+  // Add new Member (Optimistic local update + Server POST)
   const addMember = (input: NewMemberInput): Member => {
     const newId = `member-${Date.now()}`;
     const startMonth = input.start_month || 1;
     const startYear = input.start_year || 2026;
+    const cleanPhone = input.phone.trim().replace(/[^0-9]/g, "");
 
     const newMember: Member = {
       id: newId,
       organization_id: "org-001",
       name: input.name.trim(),
-      phone: input.phone.trim(),
+      phone: cleanPhone,
       city: input.city?.trim() || "Muzaffarpur",
       area: input.area?.trim() || null,
       monthly_amount: Number(input.monthly_amount),
@@ -172,15 +232,40 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
       });
     }
 
-    setCustomMembers((prev) => [newMember, ...prev]);
-    setCustomRecords((prev) => [...newRecordsForMember, ...prev]);
+    // Optimistic state update
+    setMembers((prev) => [newMember, ...prev.filter((m) => m.id !== newId)]);
+    setChandaRecords((prev) => [...newRecordsForMember, ...prev]);
+
+    // Async POST to server so all other browsers/devices receive it
+    fetch("/api/members", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: newMember.name,
+        phone: newMember.phone,
+        city: newMember.city,
+        area: newMember.area,
+        monthly_amount: newMember.monthly_amount,
+        start_month: newMember.start_month,
+        start_year: newMember.start_year,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          // Trigger a quick re-sync
+          refreshData();
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to sync member to server:", err);
+      });
 
     return newMember;
   };
 
-  // Record Payment
+  // Record Payment (Optimistic local update + Server POST)
   const recordPayment = (input: NewPaymentInput) => {
-    const member = members.find((m) => m.id === input.member_id);
     const existingRec = chandaRecords.find(
       (r) => r.member_id === input.member_id && r.month === input.month && r.year === input.year
     );
@@ -220,7 +305,7 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
       const updatedPaid = existingRec.paid_amount + Number(input.amount);
       const newStatus = getPaymentStatus(existingRec.expected_amount, updatedPaid);
 
-      setCustomRecords((prev) => {
+      setChandaRecords((prev) => {
         const filtered = prev.filter((r) => r.id !== existingRec.id);
         return [
           {
@@ -234,8 +319,25 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
       });
     }
 
-    setCustomPayments((prev) => [newPayment, ...prev]);
-    setCustomReceipts((prev) => [newReceipt, ...prev]);
+    setPayments((prev) => [newPayment, ...prev]);
+    setReceipts((prev) => [newReceipt, ...prev]);
+
+    // Send to server
+    fetch("/api/payments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        member_id: input.member_id,
+        amount: input.amount,
+        payment_method: input.payment_method,
+        month: input.month,
+        year: input.year,
+        payment_date: todayStr,
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => refreshData())
+      .catch((err) => console.error("Failed to sync payment to server:", err));
 
     return { payment: newPayment, receipt: newReceipt };
   };
@@ -266,6 +368,11 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
 
   const getMemberById = (id: string) => members.find((m) => m.id === id);
 
+  const getMemberByPhone = (phone: string) => {
+    const clean = phone.replace(/[^0-9]/g, "");
+    return members.find((m) => m.phone.replace(/[^0-9]/g, "").includes(clean) || clean.includes(m.phone.replace(/[^0-9]/g, "")));
+  };
+
   const getPersonRecords = (memberId: string) => {
     return chandaRecords
       .filter((r) => r.member_id === memberId)
@@ -281,7 +388,7 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
   const getPaymentsWithDetails = (): PaymentWithDetails[] => {
     return payments.map((p) => {
       const member = members.find((m) => m.id === p.member_id) || {
-        name: "Unknown Member",
+        name: "Community Member",
         phone: "—",
       };
       const record = chandaRecords.find((r) => r.id === p.chanda_record_id);
@@ -425,6 +532,7 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
         recordPayment,
         getMembersWithStatus,
         getMemberById,
+        getMemberByPhone,
         getPersonRecords,
         getPersonPayments,
         getPaymentsWithDetails,
@@ -434,6 +542,8 @@ export function ChandaProvider({ children }: { children: React.ReactNode }) {
         getMonthlyOverview,
         getAnnualReport,
         org: demoOrg,
+        isSyncing,
+        refreshData,
       }}
     >
       {children}

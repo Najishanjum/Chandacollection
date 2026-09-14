@@ -1,0 +1,50 @@
+[
+  {
+    "id": "photo-1789377021654-hbfoj",
+    "src": "/images/gallery/quadri-masjid-facade-day.png",
+    "title": "New Gate Entrance",
+    "uploader": "Md Tarique",
+    "category": "construction",
+    "tag": "Community Upload • Md Tarique",
+    "tagColor": "bg-[#252BFF] text-white",
+    "location": "Deoria Baradih, Muzaffarpur",
+    "date": "Sept 2026",
+    "created_at": "2026-09-14T09:10:21.877Z"
+  },
+  {
+    "id": "item-1",
+    "src": "/images/gallery/quadri-masjid-minarets-sunset.png",
+    "title": "Twin Minarets at Golden Hour",
+    "uploader": "Quadri Jama Masjid Committee",
+    "category": "minarets",
+    "tag": "Architecture • Minarets",
+    "tagColor": "bg-[#FF3864] text-white",
+    "location": "Deoria Baradih, Muzaffarpur",
+    "date": "September 2026",
+    "created_at": "2026-09-01T10:00:00.000Z"
+  },
+  {
+    "id": "item-2",
+    "src": "/images/gallery/quadri-masjid-facade-day.png",
+    "title": "Masjid Construction & Expansion",
+    "uploader": "Quadri Jama Masjid Committee",
+    "category": "construction",
+    "tag": "Chanda in Action • Tameer",
+    "tagColor": "bg-[#252BFF] text-white",
+    "location": "Deoria Baradih, Muzaffarpur",
+    "date": "Ongoing 2026",
+    "created_at": "2026-09-05T12:00:00.000Z"
+  },
+  {
+    "id": "item-3",
+    "src": "/images/gallery/quadri-masjid-sunset-glow.png",
+    "title": "Dome & Minarets Twilight Panorama",
+    "uploader": "Quadri Jama Masjid Committee",
+    "category": "skyline",
+    "tag": "Spiritual Skyline",
+    "tagColor": "bg-[#0B0906] text-[#C8FF19]",
+    "location": "Deoria Baradih, Muzaffarpur",
+    "date": "September 2026",
+    "created_at": "2026-09-10T18:00:00.000Z"
+  }
+]

@@ -68,6 +68,7 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider } from "@/lib/i18n";
+import { ChandaProvider } from "@/lib/chanda-store";
 import { MobileInstallPrompt } from "@/components/MobileInstallPrompt";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -78,8 +79,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-screen">
         <LanguageProvider>
-          {children}
-          <MobileInstallPrompt />
+          <ChandaProvider>
+            {children}
+            <MobileInstallPrompt />
+          </ChandaProvider>
         </LanguageProvider>
         <Toaster
           position="bottom-right"

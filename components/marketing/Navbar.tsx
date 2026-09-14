@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -19,56 +19,58 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-[family-name:var(--font-space-grotesk)] font-bold text-xl tracking-tight flex items-center gap-1.5"
+            className="font-[family-name:var(--font-space-grotesk)] font-bold text-lg sm:text-xl tracking-tight flex items-center gap-1.5"
           >
             <span>🕌</span>
             <span>{t.appName}</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6">
+            <Link
+              href="/#gallery"
+              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-xs uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors flex items-center gap-1"
+            >
+              <span>Masjid Gallery</span>
+              <span className="w-2 h-2 rounded-full bg-[#C8FF19] border border-[#0B0906]" />
+            </Link>
+            <Link
+              href="/calendar"
+              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-xs uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors flex items-center gap-1"
+            >
+              <span>Calendar</span>
+              <span className="text-xs">🌙</span>
+            </Link>
             <Link
               href="/how-it-works"
-              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors"
+              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-xs uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors"
             >
               How It Works
             </Link>
             <Link
               href="/features"
-              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors"
+              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-xs uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors"
             >
               Features
-            </Link>
-            <Link
-              href="/#gallery"
-              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors flex items-center gap-1"
-            >
-              <span>Gallery</span>
-              <span className="w-2 h-2 rounded-full bg-[#C8FF19] border border-[#0B0906]" />
-            </Link>
-            <Link
-              href="/calendar"
-              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors flex items-center gap-1"
-            >
-              <span>Calendar</span>
-              <span className="text-xs">🌙</span>
             </Link>
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2.5">
             <LanguageToggle />
             <Link
-              href="/dashboard"
-              className="font-[family-name:var(--font-space-grotesk)] font-semibold text-sm uppercase tracking-wider text-[#6B6860] hover:text-[#0B0906] transition-colors"
+              href="/login?tab=member"
+              className="brutal-btn bg-[#C8FF19] text-[#0B0906] hover:bg-white text-xs py-1.5 px-3 flex items-center gap-1 font-bold"
             >
-              Dashboard
+              <Phone size={13} />
+              <span>Member Portal</span>
             </Link>
             <Link
-              href="/signup"
-              className="brutal-btn brutal-btn-primary text-sm py-2 px-3"
+              href="/login?tab=secretary"
+              className="brutal-btn bg-[#252BFF] text-white hover:bg-[#1a20d4] text-xs py-1.5 px-3 flex items-center gap-1 font-bold"
             >
-              Get Started
+              <Shield size={13} />
+              <span>Secretary Login</span>
             </Link>
           </div>
 
@@ -98,47 +100,57 @@ export function Navbar() {
           >
             <div className="px-4 py-6 space-y-4 bg-[#F5F4EA]">
               <Link
-                href="/how-it-works"
+                href="/login?tab=member"
                 onClick={() => setMobileOpen(false)}
-                className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase"
+                className="brutal-btn bg-[#C8FF19] text-[#0B0906] w-full justify-center py-2.5 text-sm font-bold flex items-center gap-1.5"
               >
-                How It Works
+                <Phone size={15} />
+                <span>📱 Member Login (Mobile Number)</span>
               </Link>
               <Link
-                href="/features"
+                href="/login?tab=secretary"
                 onClick={() => setMobileOpen(false)}
-                className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase"
+                className="brutal-btn bg-[#252BFF] text-white w-full justify-center py-2.5 text-sm font-bold flex items-center gap-1.5"
               >
-                Features
+                <Shield size={15} />
+                <span>🔐 Secretary Sign In (Email & Password)</span>
               </Link>
-              <Link
-                href="/#gallery"
-                onClick={() => setMobileOpen(false)}
-                className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase text-[#252BFF]"
-              >
-                🕌 Masjid Gallery
-              </Link>
-              <Link
-                href="/calendar"
-                onClick={() => setMobileOpen(false)}
-                className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase text-[#00875A]"
-              >
-                🌙 Islamic Calendar
-              </Link>
-              <div className="pt-4 border-t-2 border-[#D4D3C9] space-y-3">
+
+              <div className="pt-2 space-y-2 border-t border-[#D4D3C9]">
                 <Link
-                  href="/login"
+                  href="/#gallery"
                   onClick={() => setMobileOpen(false)}
-                  className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-lg uppercase text-[#6B6860]"
+                  className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-base uppercase text-[#252BFF]"
                 >
-                  Sign In
+                  🕌 Masjid Gallery (Live Photos)
                 </Link>
                 <Link
-                  href="/signup"
+                  href="/calendar"
                   onClick={() => setMobileOpen(false)}
-                  className="brutal-btn brutal-btn-primary w-full text-center"
+                  className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-base uppercase text-[#00875A]"
                 >
-                  Get Started
+                  🌙 Islamic Calendar
+                </Link>
+                <Link
+                  href="/how-it-works"
+                  onClick={() => setMobileOpen(false)}
+                  className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-base uppercase"
+                >
+                  How It Works
+                </Link>
+                <Link
+                  href="/features"
+                  onClick={() => setMobileOpen(false)}
+                  className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-base uppercase"
+                >
+                  Features
+                </Link>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="block font-[family-name:var(--font-space-grotesk)] font-semibold text-base uppercase text-[#6B6860]"
+                >
+                  Dashboard Overview
                 </Link>
               </div>
             </div>

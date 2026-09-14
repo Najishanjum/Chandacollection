@@ -67,6 +67,15 @@ An instant language toggle available in the header and sidebar supporting:
   * *Monthly Chanda*: **Mahina ka Chanda**
 * **हिन्दी (`HI`)**: Full Devanagari Hindi support (*"मस्जिद का चंदा"*, *"नया सदस्य जोड़ें"*, *"जमा हुआ"*, *"बाकी है"*, *"रसीद"*).
 
+### 6. 🔐 Dual-Role Authentication & Member Portal
+* **Secretary Login**: Secure access to the full dashboard and management tools.
+* **Member Login**: Members can log in securely using just their 10-digit mobile number.
+* **Personalized Dashboard**: Members can view their own 12-month Chanda passbook, download past receipts, and track their contributions.
+
+### 7. ☁️ Real-Time Server Synchronization & Gallery
+* **Universal Photo Gallery**: Any uploaded image of the Masjid is synced and visible to all users across all devices.
+* **Cross-Device Sync**: Data is persisted on a server-side JSON store (via custom API routes), ensuring that members and secretaries always see up-to-date information across different browsers and devices in real-time.
+
 ---
 
 ## 🛠️ Technology Stack
@@ -89,8 +98,9 @@ An instant language toggle available in the header and sidebar supporting:
 ```
 chanda/
 ├── app/
-│   ├── (auth)/             # Login & Signup flows
+│   ├── (auth)/             # Login & Signup flows (Member & Secretary tabs)
 │   ├── (marketing)/        # Landing page, Features, How It Works, About, Contact
+│   ├── api/                # REST API endpoints (gallery, members, payments)
 │   ├── dashboard/          # Secretary Dashboard
 │   │   ├── chanda/         # Monthly Chanda registry & quick payment
 │   │   ├── payments/       # Full payment ledger & receipt actions
@@ -100,6 +110,7 @@ chanda/
 │   │   ├── reports/        # Analytics, Recharts graphs, Excel exports
 │   │   ├── layout.tsx      # Responsive dashboard navigation & sidebar
 │   │   └── page.tsx        # Executive dashboard overview
+│   ├── member/             # Member personalized dashboard and passbook
 │   ├── globals.css         # Neo-brutalist theme styles & CSS variables
 │   └── layout.tsx          # Root layout with fonts, Toaster & LanguageProvider
 ├── components/
@@ -111,10 +122,11 @@ chanda/
 │   └── LanguageToggle.tsx            # Global EN / Hinglish / HI switcher
 ├── lib/
 │   ├── calculations.ts     # Status, collection rate, and balance logic
-│   ├── chanda-store.tsx    # Unified reactive store with localStorage sync
+│   ├── chanda-store.tsx    # Unified reactive store with server polling sync
 │   ├── demo-data.ts        # Pre-loaded sample data for testing
 │   ├── i18n.tsx            # Localization dictionary & React context
 │   ├── number-to-words.ts  # Indian currency number-to-words (English & Hindi)
+│   ├── server-data.ts      # Server-side filesystem database persistence layer
 │   ├── supabase/           # Supabase client, server, and middleware helpers
 │   └── utils.ts            # Currency formatter, date helpers, cn utility
 └── types/
