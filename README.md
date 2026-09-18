@@ -19,9 +19,10 @@ Most Masjids in India manage monthly Chanda (contributions) using paper register
 * ❌ Time-consuming receipt generation
 * ❌ Difficulty generating annual/monthly committee reports
 
+
 **CHANDA** is built to do one thing exceptionally well:  
 **Add People → Record Chanda → Track Payments → Generate Receipts → See Reports → Build Transparency.**
-
+This is for uadri jama asjid deoria 
 It is deliberately simple, intuitive, and works seamlessly on mobile phones for Masjid Secretaries and Mutawallis.
 
 ---
