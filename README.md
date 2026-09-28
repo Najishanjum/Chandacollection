@@ -176,6 +176,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
+Chanda collectiob built by Najish for mosque or madarsa
+
 
 Najish anjum
 ## 📄 License
